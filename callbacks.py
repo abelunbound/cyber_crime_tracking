@@ -416,7 +416,8 @@ def register_callbacks(app, db):
     
     # Logout callback
     @app.callback(
-        Output('url', 'pathname'),
+        [Output('url', 'pathname'),
+         Output('session-store', 'data', allow_duplicate=True)],
         Input('logout-button', 'n_clicks'),
         State('session-store', 'data'),
         prevent_initial_call=True
@@ -424,4 +425,4 @@ def register_callbacks(app, db):
     def logout(n_clicks, session_data):
         if session_data:
             db.log_activity(session_data.get('username', 'unknown'), 'LOGOUT', 'User logged out')
-        return '/'
+        return '/', None

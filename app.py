@@ -70,10 +70,9 @@ def get_login_layout():
     ], fluid=True)
 
 # Main dashboard layout
-def get_dashboard_layout():
+def get_dashboard_layout(username='Guest'):
     return dbc.Container([
-        # Store components
-        dcc.Store(id='session-store', storage_type='session'),
+        # Interval for auto-refresh
         dcc.Interval(id='interval-component', interval=60000, n_intervals=0),
         
         # Header
@@ -86,7 +85,7 @@ def get_dashboard_layout():
                     ], width="auto"),
                     dbc.Col([
                         dbc.Nav([
-                            dbc.NavItem(dbc.NavLink([html.I(className="fas fa-user me-2"), html.Span(id='username-display')], href="#")),
+                            dbc.NavItem(dbc.NavLink([html.I(className="fas fa-user me-2"), html.Span(username, id='username-display')], href="#")),
                             dbc.NavItem(dbc.Button("Logout", id='logout-button', color="danger", size="sm"))
                         ], className="ms-auto", navbar=True)
                     ])
@@ -112,7 +111,7 @@ def get_dashboard_layout():
                             dbc.NavLink([html.I(className="fas fa-chart-bar me-2"), "Reports"], 
                                        id='nav-reports', href="#"),
                             dbc.NavLink([html.I(className="fas fa-users me-2"), "Users"], 
-                                       id='nav-users', href="#", id_suffix='admin'),
+                                       id='nav-users', href="#"),
                         ], vertical=True, pills=True)
                     ])
                 ])
@@ -517,7 +516,8 @@ def get_users_page():
 # App layout
 app.layout = html.Div([
     dcc.Location(id='url', refresh=False),
-    html.Div(id='page-layout')
+    html.Div(id='page-layout'),
+    dcc.Store(id='session-store', storage_type='session')
 ])
 
 # Import callbacks module
@@ -526,12 +526,13 @@ from callbacks import register_callbacks
 # Core authentication and navigation callbacks
 @app.callback(
     Output('page-layout', 'children'),
-    Input('url', 'pathname'),
-    State('session-store', 'data')
+    [Input('url', 'pathname'),
+     Input('session-store', 'data')]
 )
 def display_page(pathname, session_data):
     if session_data and session_data.get('logged_in'):
-        return get_dashboard_layout()
+        username = session_data.get('username', 'Guest')
+        return get_dashboard_layout(username)
     return get_login_layout()
 
 @app.callback(
@@ -584,9 +585,10 @@ def navigate(dash_clicks, cases_clicks, new_clicks, search_clicks, reports_click
 
 @app.callback(
     Output('username-display', 'children'),
-    Input('session-store', 'data')
+    [Input('session-store', 'data'),
+     Input('interval-component', 'n_intervals')]
 )
-def display_username(session_data):
+def display_username(session_data, n_intervals):
     if session_data and session_data.get('username'):
         return session_data['username']
     return 'Guest'
@@ -595,4 +597,4 @@ def display_username(session_data):
 register_callbacks(app, db)
 
 if __name__ == '__main__':
-    app.run_server(debug=True, host='0.0.0.0', port=8050)
+    app.run(debug=True, host='0.0.0.0', port=8050)
