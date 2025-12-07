@@ -1,0 +1,13 @@
+runtime: python311
+
+entrypoint: gunicorn -b :$PORT app:server --timeout 300 --workers 1
+
+instance_class: F1
+
+env_variables:
+  PYTHONUNBUFFERED: "1"
+
+automatic_scaling:
+  min_instances: 0              # Sleep when idle (saves $)
+  max_instances: 2              # Limit cost
+  target_cpu_utilization: 0.65

@@ -15,6 +15,7 @@ app = dash.Dash(
     suppress_callback_exceptions=True
 )
 app.title = "Gloria's Cybercrime Management System"
+server = app.server
 
 # Initialize database and auth manager
 db = Database()
@@ -588,3 +589,5 @@ register_callbacks(app, db)
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=8050)
+else:
+    server = app.server # for GCP

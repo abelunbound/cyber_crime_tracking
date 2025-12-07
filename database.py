@@ -4,7 +4,7 @@ import pandas as pd
 from pathlib import Path
 
 class Database:
-    def __init__(self, db_path='cybercrime.db'):
+    def __init__(self, db_path='/tmp/cybercrime.db'):
         self.db_path = db_path
         self.init_database()
     
