@@ -14,7 +14,7 @@ app = dash.Dash(
     external_stylesheets=[dbc.themes.BOOTSTRAP, dbc.icons.FONT_AWESOME],
     suppress_callback_exceptions=True
 )
-app.title = "Cybercrime Management System"
+app.title = "Gloria's Cybercrime Management System"
 
 # Initialize database and auth manager
 db = Database()
@@ -40,7 +40,7 @@ def get_login_layout():
                 dbc.Card([
                     dbc.CardHeader([
                         html.I(className="fas fa-shield-alt fa-3x mb-3"),
-                        html.H3("Cybercrime Management System", className="text-center")
+                        html.H3("Gloria's Cybercrime Management System", className="text-center")
                     ], className="bg-primary text-white"),
                     dbc.CardBody([
                         html.Div(id='login-alert'),
@@ -81,7 +81,7 @@ def get_dashboard_layout(username='Guest'):
                 dbc.Row([
                     dbc.Col([
                         html.I(className="fas fa-shield-alt fa-2x me-2"),
-                        dbc.NavbarBrand("Cybercrime Management System", className="ms-2")
+                        dbc.NavbarBrand("Gloria's Cybercrime Management System", className="ms-2")
                     ], width="auto"),
                     dbc.Col([
                         dbc.Nav([
@@ -582,16 +582,6 @@ def navigate(dash_clicks, cases_clicks, new_clicks, search_clicks, reports_click
         return get_users_page()
     
     return get_dashboard_page()
-
-@app.callback(
-    Output('username-display', 'children'),
-    [Input('session-store', 'data'),
-     Input('interval-component', 'n_intervals')]
-)
-def display_username(session_data, n_intervals):
-    if session_data and session_data.get('username'):
-        return session_data['username']
-    return 'Guest'
 
 # Register all other callbacks
 register_callbacks(app, db)
